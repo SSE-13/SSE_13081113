@@ -2,6 +2,9 @@
  * 重力加速度
  */
 var GRAVITY = 9.8;
+var a = -1;
+var maxVx = 0;
+var maxVy = 0;
 var BOUNDS_BOTTOM = 400;
 var BOUNDS_LEFT = 0;
 var BOUNDS_RIGHT = 400;
@@ -44,14 +47,52 @@ var Body = (function () {
         this.displayObject = displayObject;
     }
     Body.prototype.onTicker = function (duringTime) {
+        if (maxVx < this.vx) {
+            maxVx = this.vx;
+        }
         this.vy += duringTime * GRAVITY;
+        /* if( this.y  = BOUNDS_BOTTOM-this.height){
+                  this.vx += duringTime * a;
+         }*/
         this.x += duringTime * this.vx;
         this.y += duringTime * this.vy;
+        if (Math.abs(this.vx) < maxVx * 0.1) {
+            a = 0;
+            this.vx = 0;
+            GRAVITY = 0;
+            this.vy = 0;
+        }
+        //if(Math.abs(this.y)<0.5){
+        // GRAVITY=0;
+        // this.vy=0;
+        //  }
         //反弹
         if (this.y + this.height > BOUNDS_BOTTOM) {
+            this.y = BOUNDS_BOTTOM - this.height;
+            this.vy = -BOUNCE * this.vy;
+            this.vx = this.vx * BOUNCE;
+        }
+        if (this.y < 0) {
+            this.y = 0;
             this.vy = -BOUNCE * this.vy;
         }
         //TODO： 左右越界反弹
+        /*if (this.x + this.width > BOUNDS_RIGHT ||this.x  < 0 ) {
+            
+            a=a*(-1);
+            this.vx = -BOUNCE * this.vx;
+            
+        }*/
+        if (this.x + this.width > BOUNDS_RIGHT) {
+            this.x = BOUNDS_RIGHT - this.width;
+            this.vx = -BOUNCE * this.vx;
+            a = a * (-1);
+        }
+        if (this.x < 0) {
+            this.x = 0;
+            this.vx = -BOUNCE * this.vx;
+            a = a * (-1);
+        }
         //根据物体位置更新显示对象属性
         var displayObject = this.displayObject;
         displayObject.x = this.x;
@@ -69,8 +110,8 @@ rect.color = '#FF0000';
 var body = new Body(rect);
 body.width = rect.width;
 body.height = rect.height;
-body.vx = 5; //需要保证 vx 在 0-50的范围内行为正常
-body.vy = 0; //需要保证 vy 在 0-50的范围内行为正常
+body.vx = 3; //需要保证 vx 在 0-50的范围内行为正常
+body.vy = 5; //需要保证 vy 在 0-50的范围内行为正常
 var renderCore = new RenderCore();
 var ticker = new Ticker();
 renderCore.start([rect]);
