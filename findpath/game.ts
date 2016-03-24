@@ -8,6 +8,8 @@ module game {
     const NUM_ROWS = 12;
 
     const NUM_COLS = 12;
+    
+    const times=5;
 
     export class WorldMap extends DisplayObject {
 
@@ -93,49 +95,38 @@ module game {
 
          public onTicker(duringTime) {
             
-             /* console.log(duringTime);
+             console.log(duringTime);
               console.log(this.time);
             
-              if(this.time<30){
+              if(this.time<times){
                  
-                   this.time+=3;
-                   // console.log('11111111111');
+                   this.time+=1;
+                  
               }else{
-                this.time=3;
+                this.time=1;
                 this.path.shift();
               }
  
                    
-               //console.log('3333');
               
-                if( this.path.length>1){
+              
+                if( this.path.length>2){
                    var node1=this.path.shift();
-                   //console.log(node1.x);
+                
                    var node2=this.path.shift();
                    this.path.unshift(node2);
                    this.path.unshift(node1);
-                   this.vx=(node2.x-node1.x)*GRID_PIXEL_WIDTH/(3*10);
-                   this.vy=(node2.y-node1.y)*GRID_PIXEL_HEIGHT/(3*10);
-                      console.log('55555555555');
-            this.x+=this.vx*duringTime;
-            this.y+=this.vy*duringTime;
-                } else{
+                   this.vx=(node2.x-node1.x)*GRID_PIXEL_WIDTH/times;
+                   this.vy=(node2.y-node1.y)*GRID_PIXEL_HEIGHT/times;
+                 
+                   this.x+=this.vx;
+                   this.y+=this.vy;
+                 } else{
                     this.time=0;
                     this.vx=0;
                     this.vy=0;
-                }   */
-                  
-               if(this.path.length>1){
-                   var s=this.path.shift();
-                   this.x=s.x*GRID_PIXEL_WIDTH;
-                   this.y=s.y*GRID_PIXEL_WIDTH;
-                   
-               }
-               
-           
-        
-
-        }
+                }   
+             }
         
     }
 }
