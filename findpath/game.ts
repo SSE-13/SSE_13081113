@@ -32,15 +32,14 @@ module game {
             context.beginPath();
             for (var i = 0; i < NUM_COLS; i++) {
                 for (var j = 0; j < NUM_ROWS; j++) {
-                    context.rect(i * GRID_PIXEL_WIDTH, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
-                    context.fill();
-                    context.stroke();
+                   context.rect(i * GRID_PIXEL_WIDTH, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
+                   context.fill();
+                   context.stroke();
                 }
             }
             context.closePath();
-
         }
-
+         
     }
 
     export class BoyShape extends DisplayObject {
@@ -49,6 +48,20 @@ module game {
             context.fillStyle = '#00FFFF';
             context.arc(GRID_PIXEL_WIDTH / 2, GRID_PIXEL_HEIGHT / 2, Math.min(GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT) / 2 - 5, 0, Math.PI * 2);
             context.fill();
+            context.closePath();
+        }
+    }
+    
+     export class Barrier extends DisplayObject {
+        render(context: CanvasRenderingContext2D) {
+            context.beginPath()
+            context.fillStyle = '#000000';
+            context.strokeStyle = '#FF0000';
+            for (var j = 0; j < 5; j++) {
+                context.rect(5* GRID_PIXEL_HEIGHT, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
+                context.fill();
+                context.stroke();
+           } 
             context.closePath();
         }
     }
@@ -77,13 +90,14 @@ module game {
 
 
 var boyShape = new game.BoyShape();
+var Barrier = new game.Barrier();
 var world = new game.WorldMap();
 var body = new game.BoyBody(boyShape);
 body.run(world.grid);
 
 
 var renderCore = new RenderCore();
-renderCore.start([world, boyShape]);
+renderCore.start([world, boyShape,Barrier]);
 
 var ticker = new Ticker();
 ticker.start([body]);
