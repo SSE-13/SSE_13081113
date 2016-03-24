@@ -32,8 +32,15 @@ module game {
             context.beginPath();
             for (var i = 0; i < NUM_COLS; i++) {
                 for (var j = 0; j < NUM_ROWS; j++) {
-                   context.rect(i * GRID_PIXEL_WIDTH, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
-                   context.fill();
+                   /* if(this.grid.getNode(i,j).walkable==true){
+                         context.fillStyle = '#0000FF';
+                      
+                    }else{
+                         context.fillStyle = '#000000';
+                    
+                    }*/
+                    context.rect(i * GRID_PIXEL_WIDTH, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
+                    context.fill();
                    context.stroke();
                 }
             }
@@ -57,7 +64,7 @@ module game {
             context.beginPath()
             context.fillStyle = '#000000';
             context.strokeStyle = '#FF0000';
-            for (var j = 0; j < 5; j++) {
+            for (var j = 0; j < 6; j++) {
                 context.rect(5* GRID_PIXEL_HEIGHT, j * GRID_PIXEL_HEIGHT, GRID_PIXEL_WIDTH, GRID_PIXEL_HEIGHT);
                 context.fill();
                 context.stroke();
@@ -67,22 +74,69 @@ module game {
     }
 
     export class BoyBody extends Body {
-
-
-        public run(grid) {
+         path:Array<astar.Node>;
+         time=0;
+         vx;
+         vy;
+         
+        
+         public run(grid) {
             grid.setStartNode(0, 0);
             grid.setEndNode(10, 8);
             var findpath = new astar.AStar();
             findpath.setHeurisitic(findpath.diagonal);
             var result = findpath.findPath(grid);
-            var path = findpath._path;
-            console.log(path);
+            this.path = findpath._path;
+            console.log(this.path);
             console.log(grid.toString());
         }
 
-        public onTicker(duringTime) {
+         public onTicker(duringTime) {
+            
+             /* console.log(duringTime);
+              console.log(this.time);
+            
+              if(this.time<30){
+                 
+                   this.time+=3;
+                   // console.log('11111111111');
+              }else{
+                this.time=3;
+                this.path.shift();
+              }
+ 
+                   
+               //console.log('3333');
+              
+                if( this.path.length>1){
+                   var node1=this.path.shift();
+                   //console.log(node1.x);
+                   var node2=this.path.shift();
+                   this.path.unshift(node2);
+                   this.path.unshift(node1);
+                   this.vx=(node2.x-node1.x)*GRID_PIXEL_WIDTH/(3*10);
+                   this.vy=(node2.y-node1.y)*GRID_PIXEL_HEIGHT/(3*10);
+                      console.log('55555555555');
+            this.x+=this.vx*duringTime;
+            this.y+=this.vy*duringTime;
+                } else{
+                    this.time=0;
+                    this.vx=0;
+                    this.vy=0;
+                }   */
+                  
+               if(this.path.length>1){
+                   var s=this.path.shift();
+                   this.x=s.x*GRID_PIXEL_WIDTH;
+                   this.y=s.y*GRID_PIXEL_WIDTH;
+                   
+               }
+               
+           
+        
 
         }
+        
     }
 }
 
