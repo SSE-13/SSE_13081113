@@ -9,7 +9,7 @@ var game;
     var GRID_PIXEL_HEIGHT = 50;
     var NUM_ROWS = 12;
     var NUM_COLS = 12;
-    var times = 10;
+    var times = 5;
     var WorldMap = (function (_super) {
         __extends(WorldMap, _super);
         function WorldMap() {
