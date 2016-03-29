@@ -103,7 +103,7 @@ module game {
                    this.time+=1;
                   
               }else{
-                this.time=1;
+                 this.time=1;
                 this.path.shift();
               }
  
