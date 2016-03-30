@@ -31,8 +31,14 @@ var render;
             }
             else {
                 //TODO:
-                // GLOBAL_MATRIX = PARENT_GLOBAL_MATRIX * LOCAL_MATRIX
-                this.globalMatrix = localMatrix;
+                // GLOBAL_MATRIX = LOCAL_MATRIX * PARENT_GLOBAL_MATRIX 
+                var parentGlobelMatrix = this.parent.globalMatrix;
+                this.globalMatrix.a = localMatrix.a * parentGlobelMatrix.a + localMatrix.b * parentGlobelMatrix.c;
+                this.globalMatrix.b = localMatrix.a * parentGlobelMatrix.b + localMatrix.b * parentGlobelMatrix.d;
+                this.globalMatrix.c = localMatrix.c * parentGlobelMatrix.a + localMatrix.d * parentGlobelMatrix.c;
+                this.globalMatrix.d = localMatrix.c * parentGlobelMatrix.b + localMatrix.d * parentGlobelMatrix.d;
+                this.globalMatrix.tx = localMatrix.tx * parentGlobelMatrix.a + localMatrix.ty * parentGlobelMatrix.c + 1 * parentGlobelMatrix.tx;
+                this.globalMatrix.ty = localMatrix.tx * parentGlobelMatrix.b + localMatrix.ty * parentGlobelMatrix.d + 1 * parentGlobelMatrix.ty;
             }
             context.setTransform(this.globalMatrix.a, this.globalMatrix.b, this.globalMatrix.c, this.globalMatrix.d, this.globalMatrix.tx, this.globalMatrix.ty);
             this.render(context);
