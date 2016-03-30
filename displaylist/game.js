@@ -7,11 +7,6 @@ var humanContainer = new render.DisplayObjectContainer();
 //var head = new render.Bitmap();
 //head.source = "wander-icon.jpg";
 //humanContainer.addChild(head)
-var head1 = new render.Bitmap();
-head1.source = 'head.png';
-humanContainer.addChild(head1);
-head1.x = 90;
-head1.y = 140;
 var trunk = new render.Bitmap();
 trunk.source = 'trunk.png';
 humanContainer.addChild(trunk);
@@ -44,8 +39,10 @@ right_leg.x = 91;
 right_leg.y = 188;
 humanContainer.scaleX = 0.5;
 humanContainer.scaleY = 0.5;
-humanContainer.x = 100;
+humanContainer.x = 200;
 humanContainer.y = 300;
+//humanContainer.globalMatrix.tx=50;
+console.log(humanContainer.globalMatrix);
 var renderCore = new render.RenderCore();
 //renderCore.start(humanContainer, ["wander-icon.jpg"]);
 renderCore.start(humanContainer, ['head.png', 'trunk.png', 'left_arm.png', 'right_arm.png', 'left_leg.png', 'right_leg.png']);
@@ -58,13 +55,12 @@ var HumanBody = (function (_super) {
         this.vr = 5;
     }
     HumanBody.prototype.onTicker = function (duringTime) {
-        this.x = this.x + duringTime * this.vx;
+        //this.x = this.x+duringTime*this.vx;
         //this.y = this.y+duringTime*this.vy;
         this.rotation = this.rotation + duringTime * this.vr;
-        var displayObject = this.displayObject;
-        displayObject.x = this.x;
-        displayObject.y = this.y;
-        displayObject.rotation = this.rotation;
+        console.log(this.width);
+        console.log(this.x);
+        console.log(this.rotation);
     };
     return HumanBody;
 }(Body));
