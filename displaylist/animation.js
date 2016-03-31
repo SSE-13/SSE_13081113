@@ -27,6 +27,7 @@ var Ticker = (function () {
     return Ticker;
 }());
 var Body = (function () {
+    //centerMatrix:render.Matrix;
     function Body(displayObject) {
         this.vx = 0;
         this.vy = 0;

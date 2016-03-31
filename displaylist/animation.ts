@@ -42,8 +42,8 @@ class Body {
     scaleX = 1;
     scaleY = 1;
 
-    displayObject;
-
+   displayObject;
+    //centerMatrix:render.Matrix;
     constructor(displayObject: render.DisplayObject) {
         this.displayObject = displayObject;
         this.x = displayObject.x;

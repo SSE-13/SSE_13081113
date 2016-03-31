@@ -121,6 +121,14 @@ var render;
         /**
          * 根据显示对象的属性确定当前矩阵
          */
+        Matrix.prototype.transformToGlobel = function (localMatrix, parentGlobelMatrix) {
+            this.a = localMatrix.a * parentGlobelMatrix.a + localMatrix.b * parentGlobelMatrix.c;
+            this.b = localMatrix.a * parentGlobelMatrix.b + localMatrix.b * parentGlobelMatrix.d;
+            this.c = localMatrix.c * parentGlobelMatrix.a + localMatrix.d * parentGlobelMatrix.c;
+            this.d = localMatrix.c * parentGlobelMatrix.b + localMatrix.d * parentGlobelMatrix.d;
+            this.tx = localMatrix.tx * parentGlobelMatrix.a + localMatrix.ty * parentGlobelMatrix.c + 1 * parentGlobelMatrix.tx;
+            this.ty = localMatrix.tx * parentGlobelMatrix.b + localMatrix.ty * parentGlobelMatrix.d + 1 * parentGlobelMatrix.ty;
+        };
         Matrix.prototype.updateFromDisplayObject = function (x, y, scaleX, scaleY, rotation) {
             this.tx = x;
             this.ty = y;
