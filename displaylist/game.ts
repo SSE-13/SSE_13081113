@@ -52,7 +52,7 @@ humanContainer.scaleY=0.5;
 humanContainer.globalMatrix
 humanContainer.x=200;
 humanContainer.y=300;
-//humanContainer.globalMatrix.tx=50;
+
 
 console.log(humanContainer.globalMatrix);
 
