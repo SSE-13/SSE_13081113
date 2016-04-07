@@ -42,13 +42,15 @@ right_leg.y=100;
 humanContainer.scaleX=0.5;
 humanContainer.scaleY=0.5;
 humanContainer.globalMatrix
-humanContainer.x=200;
+humanContainer.x=100;
 humanContainer.y=300;
 
 
 var renderCore = new render.RenderCore();
 renderCore.start(humanContainer, ['head.png','trunk.png','left_arm.png','right_arm.png','left_leg.png','right_leg.png']);
 
+var VX;
+var VR;
 class HumanBody extends Body {
     
     
@@ -70,18 +72,78 @@ var eventCore = new events.EventCore();
 eventCore.init();
 
 var headHitTest = (localPoint:math.Point,displayObject:render.DisplayObject) =>{
-    alert (`点击位置为${localPoint.x},${localPoint.y}`);
-    return true;
+    //alert (`点击位置为${localPoint.x},${localPoint.y}`);
+   // console.log(localPoint.x);
+   //  console.log(localPoint.y);
+   var headClicked=false;
+    if(localPoint.x>0 &&localPoint.x<90 && localPoint.y>0 && localPoint.y<90){
+         headClicked=true;
+    }
+    return headClicked; 
 }
 
 var headOnClick = () => {
-    alert("clicked!!");
+   // alert("clicked!!");
     //修改 HumanBody 的速度，使其反向移动
+    if(headHitTest){
+        if(body.vx==0){
+            body.vx=VX;
+            body.vr=VR;
+        }else{
+            body.vx*=-1;
+            body.vr*=-1; 
+        }
+       
+        
+    }
+}
+
+
+
+var left_legHitTest = (localPoint:math.Point,displayObject:render.DisplayObject) =>{
+     console.log(localPoint.x);
+     console.log(localPoint.y);
+     var left_legClicked=false;
+     if(localPoint.x>0 && localPoint.x<80 && localPoint.y>0 && localPoint.y<89){
+        left_legClicked=true;
+    }
+    return left_legClicked;
+}
+
+var left_legOnClick = () => {
+   if(left_legHitTest){
+        VX=body.vx;
+        VR=body.vr;
+        body.vx=0;
+        body.vr=0;
+        body.rotation=0;
+    }
+}
+
+
+
+
+var right_legHitTest = (localPoint:math.Point,displayObject:render.DisplayObject) =>{
+    var right_legClicked=false;
+     if(localPoint.x>0 && localPoint.x<88 && localPoint.y>0 && localPoint.y<88){
+        right_legClicked=true;
+    }
+    return right_legClicked;
+}
+
+var right_legOnClick = () => {
+    if(right_legHitTest){
+        VX=body.vx;
+        VR=body.vr;
+        body.vx=0;
+        body.vr=0;
+        body.rotation=0;
+    }
 }
 
 eventCore.register(head,headHitTest,headOnClick);
-
-
+eventCore.register(left_leg,left_legHitTest,left_legOnClick);
+eventCore.register(right_leg,right_legHitTest,right_legOnClick);
 
 
 
