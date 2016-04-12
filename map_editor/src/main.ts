@@ -11,6 +11,15 @@ function readFile() {
     return mapData;
 }
 
+function writeFile(newMap) {
+   var map_path = __dirname + "/map.json"
+    var content = fs.readFileSync(map_path, "utf-8");
+    var obj = JSON.parse(content);
+    obj.map=newMap;
+    fs.writeFileSync(map_path,JSON.stringify(obj), "utf-8");
+  //  return true;
+    
+}
 
 function createMapEditor() {
     var world = new editor.WorldMap();
@@ -45,7 +54,9 @@ function onTileClick(tile: editor.Tile) {
 
 
 var mapData = readFile();
-
+//var isWrited= writeFile(mapData);
+mapData[0][0]=1;
+writeFile(mapData);
 
 var renderCore = new render.RenderCore();
 var eventCore = new events.EventCore();
