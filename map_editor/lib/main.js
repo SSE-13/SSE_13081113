@@ -40,11 +40,13 @@ function onTileClick(tile) {
     console.log(tile);
     backList.push(tile);
     if (tile.color == "#0000FF") {
-        mapData[tile.ownedCol][tile.ownedRow] = 0;
+        tile.color = "#FF0000";
+        mapData[tile.ownedRow][tile.ownedCol] = 0;
         console.log("red");
     }
     else {
-        mapData[tile.ownedCol][tile.ownedRow] = 1;
+        tile.color = "#0000FF";
+        mapData[tile.ownedRow][tile.ownedCol] = 1;
         console.log("blue");
     }
 }
@@ -57,12 +59,14 @@ var backOnClick = () => {
         var lastStep = backList.pop();
         console.log(lastStep);
         if (lastStep.color == "#0000FF") {
-            mapData[lastStep.ownedCol][lastStep.ownedRow] = 1;
+            lastStep.color = "#FF0000";
+            mapData[lastStep.ownedRow][lastStep.ownedCol] = 0;
         }
         else {
-            mapData[lastStep.ownedCol][lastStep.ownedRow] = 0;
+            lastStep.color = "#0000FF";
+            mapData[lastStep.ownedRow][lastStep.ownedCol] = 1;
         }
-        writeFile();
+        //writeFile();
         console.log("back");
     }
     else {
@@ -71,11 +75,11 @@ var backOnClick = () => {
 };
 //mapData[0][0]=1;
 //writeFile(mapData);
+var mapData = readFile();
 var renderCore = new render.RenderCore();
 var eventCore = new events.EventCore();
 eventCore.init();
 var humanContainer = new render.DisplayObjectContainer();
-var mapData = readFile();
 var editor = createMapEditor();
 humanContainer.addChild(editor);
 var saveButton = new render.Bitmap();
