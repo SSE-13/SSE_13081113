@@ -11,7 +11,7 @@ function readFile() {
     return mapData;
 }
 
-function writeFile() {
+function writeFile() {  
    var map_path = __dirname + "/map.json"
     var content = fs.readFileSync(map_path, "utf-8");
     var obj = JSON.parse(content);
@@ -48,10 +48,11 @@ function createMapEditor() {
 
 }
 
-
+var backList=new Array();
 
 function onTileClick(tile: editor.Tile) {
     console.log(tile);
+    backList.push(tile);
     if(tile.color=="#0000FF"){
         mapData[tile.ownedCol][tile.ownedRow]=0;
         console.log("red");
@@ -68,8 +69,19 @@ var saveOnClick = () => {
 }
 
 var backOnClick = () => {
+    if(backList.length>0){
+        var lastStep=backList.pop();
+        if(lastStep.color=="#0000FF"){
+            mapData[lastStep.ownedCol][lastStep.ownedRow]=1;
+        }else{
+            mapData[lastStep.ownedCol][lastStep.ownedRow]=0;
+        }
     writeFile();
     console.log("back");
+    }else{
+        console.log("No More Step to Go Back");
+    }
+
 }
 
 

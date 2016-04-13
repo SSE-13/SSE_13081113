@@ -35,8 +35,10 @@ function createMapEditor() {
     }
     return world;
 }
+var backList = new Array();
 function onTileClick(tile) {
     console.log(tile);
+    backList.push(tile);
     if (tile.color == "#0000FF") {
         mapData[tile.ownedCol][tile.ownedRow] = 0;
         console.log("red");
@@ -52,8 +54,20 @@ var saveOnClick = () => {
     console.log("save");
 };
 var backOnClick = () => {
-    writeFile();
-    console.log("back");
+    if (backList.length > 0) {
+        var lastStep = backList.pop();
+        if (lastStep.color == "#0000FF") {
+            mapData[lastStep.ownedCol][lastStep.ownedRow] = 1;
+        }
+        else {
+            mapData[lastStep.ownedCol][lastStep.ownedRow] = 0;
+        }
+        writeFile();
+        console.log("back");
+    }
+    else {
+        console.log("No More Step to Go Back");
+    }
 };
 //mapData[0][0]=1;
 //writeFile(mapData);
