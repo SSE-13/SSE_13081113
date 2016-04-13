@@ -42,7 +42,6 @@ function onTileClick(tile) {
     if (tile.color == "#0000FF") {
         mapData[tile.ownedCol][tile.ownedRow] = 0;
         console.log("red");
-        writeFile();
     }
     else {
         mapData[tile.ownedCol][tile.ownedRow] = 1;
@@ -56,6 +55,7 @@ var saveOnClick = () => {
 var backOnClick = () => {
     if (backList.length > 0) {
         var lastStep = backList.pop();
+        console.log(lastStep);
         if (lastStep.color == "#0000FF") {
             mapData[lastStep.ownedCol][lastStep.ownedRow] = 1;
         }
