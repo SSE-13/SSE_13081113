@@ -11,15 +11,17 @@ function readFile() {
     return mapData;
 }
 
-function writeFile(newMap) {
+function writeFile() {
    var map_path = __dirname + "/map.json"
     var content = fs.readFileSync(map_path, "utf-8");
     var obj = JSON.parse(content);
-    obj.map=newMap;
+    obj.map=mapData;
     fs.writeFileSync(map_path,JSON.stringify(obj), "utf-8");
   //  return true;
     
 }
+
+
 
 function createMapEditor() {
     var world = new editor.WorldMap();
@@ -50,18 +52,55 @@ function createMapEditor() {
 
 function onTileClick(tile: editor.Tile) {
     console.log(tile);
+    if(tile.color=="#0000FF"){
+        mapData[tile.ownedCol][tile.ownedRow]=0;
+        console.log("red");
+        writeFile();
+    }else{
+        mapData[tile.ownedCol][tile.ownedRow]=1;
+        console.log("blue");
+    }
+}
+
+var saveOnClick = () => {
+    writeFile();
+    console.log("save");
+}
+
+var backOnClick = () => {
+    writeFile();
+    console.log("back");
 }
 
 
-var mapData = readFile();
-//var isWrited= writeFile(mapData);
-mapData[0][0]=1;
-writeFile(mapData);
+
+//mapData[0][0]=1;
+//writeFile(mapData);
 
 var renderCore = new render.RenderCore();
 var eventCore = new events.EventCore();
 eventCore.init();
 
+var humanContainer = new render.DisplayObjectContainer();
 
+var mapData = readFile();
 var editor = createMapEditor();
-renderCore.start(editor);
+humanContainer.addChild(editor)
+
+var saveButton = new render.Bitmap();
+saveButton.source = 'save.png';
+humanContainer.addChild(saveButton)
+saveButton.x=25;
+saveButton.y=225;
+
+var backButton = new render.Bitmap();
+backButton.source = 'back.png';
+humanContainer.addChild(backButton)
+backButton.x=125;
+backButton.y=225;
+
+renderCore.start(humanContainer,['save.png','back.png']);
+
+
+eventCore.register(saveButton,events.displayObjectRectHitTest,saveOnClick);
+eventCore.register(backButton,events.displayObjectRectHitTest,backOnClick);
