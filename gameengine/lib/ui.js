@@ -12,6 +12,7 @@ var ui;
             var _this = this;
             _super.call(this);
             this.isSingle = true;
+            this.isClick = false;
             this._text = "label";
             this.background = new render.Rect();
             // this.backImage=new render.Bitmap();
@@ -29,8 +30,10 @@ var ui;
             eventCore.register(this, events.displayObjectRectHitTest, function () {
                 if (_this.onClick) {
                     _this.onClick();
-                    if (_this.isSingle)
+                    if (_this.isSingle) {
                         _this.setColor(_this.background.color == "#FF0000" ? "#0000FF" : "#FF0000"); //单选
+                        _this.isClick = true;
+                    }
                 }
             });
         }

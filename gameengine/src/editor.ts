@@ -30,7 +30,7 @@ module editor {
     }
 
 
-    export class Tile extends render.Rect {
+    export class Tile extends render.Bitmap {
 
 
         public ownedRow: number;
@@ -39,19 +39,26 @@ module editor {
 
         constructor() {
             super();
+            
         }
 
         public setWalkable(value) {
-            this.color = value ? "#0000FF" : "#FF0000";
+           // this.color = value ? "#0000FF" : "#FF0000";
         }
     }
     
     
     export class ControlPanel extends render.DisplayObjectContainer {
      
-         public _textCol: string = "行:";
-         public _textRow: string = "列:";
-         public _textWalkable: string = "是";
+         //public _textCol: string = "行:";
+        // public _textRow: string = "列:";
+         //public _textWalkable: string = "是";
+         public textCol:render.TextField;
+         public textRow:render.TextField;
+         public buttonWalkable:ui.Button;
+         public buttonPic;
+         
+         public nowTile;
          
         constructor(){
             super();
@@ -64,20 +71,22 @@ module editor {
                 alert(111);
             }
             
-            var textCol=new render.TextField();
-            textCol.text=this._textCol;
-            textCol.width=75;
-            textCol.height=50;
-            textCol.y=50;
-            this.addChild(textCol);
+             this.textRow=new render.TextField();
+            this.textRow.text="行：";
+            this.textRow.width=75;
+            this.textRow.height=50;
+            this.textRow.y=50;
+            this.addChild(this.textRow);
             
-            var textRow=new render.TextField();
-            textRow.text=this._textRow;
-            textRow.width=75;
-            textRow.height=50;
-            textRow.x=75;
-            textRow.y=50;
-            this.addChild(textRow);
+            this.textCol=new render.TextField();
+            this.textCol.text="列：";
+            this.textCol.width=75;
+            this.textCol.height=50;
+            this.textCol.x=75;
+            this.textCol.y=50;
+            this.addChild( this.textCol);
+            
+           
             
             var textWalkable=new render.TextField();
             textWalkable.text="是否可走：";
@@ -86,17 +95,20 @@ module editor {
             textWalkable.y=100;
             this.addChild(textWalkable);
       
-            var buttonWalkable = new ui.Button();
-            buttonWalkable.text=this._textWalkable;
-            buttonWalkable.width= 50;
-            buttonWalkable.height = 50;
-            buttonWalkable.x=100;
-            buttonWalkable.y=75; 
-            this.addChild(buttonWalkable);
-            buttonWalkable.onClick = ()=> {
+            this.buttonWalkable = new ui.Button();
+            this.buttonWalkable.text="是";
+            this.buttonWalkable.width= 50;
+            this.buttonWalkable.height = 50;
+            this.buttonWalkable.x=100;
+            this.buttonWalkable.y=75; 
+            this.addChild(this.buttonWalkable);
+            this.buttonWalkable.onClick = ()=> {
                // buttonWalkable.setColor(this._textWalkable == "是" ? "#0000FF":"#FF0000");
-                this._textWalkable=this._textWalkable == "是" ? "否":"是"; 
-                buttonWalkable.text=this._textWalkable; 
+                this.buttonWalkable.text=this.buttonWalkable.text == "是" ? "否":"是"; 
+                if(this.nowTile){
+                   mapData[this.nowTile.ownedRow][this.nowTile.ownedCol]=mapData[this.nowTile.ownedRow][this.nowTile.ownedCol]==0?1:0;
+                }
+                
                 //alert("设为可走");
                 //修改mapDate
                 
@@ -110,7 +122,7 @@ module editor {
             this.addChild(textPic);
             
            var pic=[];
-           var buttonPic=[];
+           this.buttonPic=[];
             for(var i=0;i<picNum/3;i++){
                 pic[i]=[];
                for(var j=0;j<3;j++){
@@ -123,17 +135,27 @@ module editor {
                   pic[i][j].y=200+i*75;
                   this.addChild(pic[i][j]);
                   
-                  buttonPic[i*3+j]=new ui.Button();
-                  buttonPic[i*3+j].text="";
-                  buttonPic[i*3+j].width=50;
-                  buttonPic[i*3+j].height=25;
-                  buttonPic[i*3+j].x=50*j;
-                  buttonPic[i*3+j].y=250+i*75;
-                  this.addChild(buttonPic[i*3+j]);
-                  buttonPic[i*3+j].onClick = ()=> {
+                  this.buttonPic[i*3+j]=new ui.Button();
+                  this.buttonPic[i*3+j].text="";
+                  this.buttonPic[i*3+j].width=50;
+                  this.buttonPic[i*3+j].height=25;
+                  this.buttonPic[i*3+j].x=50*j;
+                  this.buttonPic[i*3+j].y=250+i*75;
+                  this.addChild( this.buttonPic[i*3+j]);
+                  this.buttonPic[i*3+j].onClick = ()=> {
+                      //更换图片素材
                       for(var m=0;m<picNum;m++){
-                          buttonPic[m].setColor("#FF0000");
+                           this.buttonPic[m].setColor("#FF0000");
+                           this.buttonPic[m].isClick=false;
                       }
+                      for(var n=0;n<picNum;n++){
+                           
+                           if(this.buttonPic[n].isClick==true){
+                                picData[this.nowTile.ownedRow][this.nowTile.ownedCol]=n+1;
+                                break;
+                           }
+                      }
+                      
                   }
                 }
             }
@@ -148,6 +170,7 @@ module editor {
            buttonSave.onClick = ()=> {
                alert("保存成功")
                 //save
+                storage.saveFile();
             }
             
              var buttonBack = new ui.Button();
@@ -166,6 +189,26 @@ module editor {
  
             
         }
+        
+        //显示Tile信息
+        public setControlPanel(tile:editor.Tile){
+            
+            this.nowTile=tile;
+            console.log(this.nowTile)
+            
+            this.textRow.text="行："+(tile.ownedRow+1);
+            this.textCol.text="列："+(tile.ownedCol+1);
+            this.buttonWalkable.text=mapData[tile.ownedRow][tile.ownedCol]==0?"是":"否";
+            this.buttonWalkable.setColor(mapData[tile.ownedRow][tile.ownedCol]==0?"#FF0000":"#0000FF");
+            for(var i=0;i<picNum;i++){
+                this.buttonPic[i].setColor("#FF0000");
+            }
+           if(picData[tile.ownedRow][tile.ownedCol]!=0){
+                this.buttonPic[picData[tile.ownedRow][tile.ownedCol]-1].setColor("#0000FF");
+            }
+            
+        }
+        
         
         
         

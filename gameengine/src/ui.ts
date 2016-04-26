@@ -6,6 +6,8 @@ module ui {
 
         public onClick: Function;
         public isSingle:boolean=true;
+        public isClick:boolean=false;
+        
         public get text(): string {
             return this._text;
         }
@@ -75,8 +77,12 @@ module ui {
                 if (this.onClick) {
                 
                     this.onClick();
-                    if(this.isSingle)
-                    this.setColor(this.background.color=="#FF0000"?"#0000FF":"#FF0000");//单选
+                    
+                    if(this.isSingle){
+                        this.setColor(this.background.color=="#FF0000"?"#0000FF":"#FF0000");//单选
+                        this.isClick=true;
+                    }
+                        
                 }
             });
 
