@@ -9,7 +9,9 @@ var editor;
     editor.GRID_PIXEL_HEIGHT = 50;
     editor.picNum = 6;
     var backList = new Array();
-    var origonBackList = new Array();
+    // var origonBackList=new Array();
+    var backWalkableList = new Array();
+    var backPicList = new Array();
     var WorldMap = (function (_super) {
         __extends(WorldMap, _super);
         function WorldMap() {
@@ -95,16 +97,14 @@ var editor;
             var pic = [];
             this.buttonPic = [];
             for (var i = 0; i < editor.picNum / 3; i++) {
-                pic[i] = [];
                 for (var j = 0; j < 3; j++) {
-                    pic[i][j] = new render.Bitmap();
-                    pic[i][j].source = "pic" + (i * 3 + j + 1) + ".png";
-                    console.debug(pic[i][j].source);
-                    pic[i][j].width = 50;
-                    pic[i][j].height = 50;
-                    pic[i][j].x = 50 * j;
-                    pic[i][j].y = 200 + i * 75;
-                    this.addChild(pic[i][j]);
+                    var tile = new editor.Tile();
+                    tile.source = "pic" + (i * 3 + j + 1) + ".png";
+                    tile.x = 50 * j;
+                    tile.y = 200 + 75 * i;
+                    this.addChild(tile);
+                    tile.width = editor.GRID_PIXEL_WIDTH;
+                    tile.height = editor.GRID_PIXEL_HEIGHT;
                     this.buttonPic[i * 3 + j] = new ui.Button();
                     this.buttonPic[i * 3 + j].text = "";
                     this.buttonPic[i * 3 + j].width = 50;
@@ -112,27 +112,33 @@ var editor;
                     this.buttonPic[i * 3 + j].x = 50 * j;
                     this.buttonPic[i * 3 + j].y = 250 + i * 75;
                     this.addChild(this.buttonPic[i * 3 + j]);
+                    this.buttonPic[i * 3 + j].checkClickNO = i * 3 + j;
                     this.buttonPic[i * 3 + j].onClick = function () {
                         //更换图片素材
                         _this.buttonPicListner();
-                        /* for(var n=0;n<picNum;n++){
-                              
-                              if(this.buttonPic[n].isClick==true){
-                                   picData[this.nowTile.ownedRow][this.nowTile.ownedCol]=n+1;
-                                   this.nowTile.source="pic"+(n+1)+".png";
-                                   break;
-                              }
-                         }*/
                     };
                 }
             }
+            var buttonUpdate = new ui.Button();
+            buttonUpdate.text = "刷新";
+            buttonUpdate.isSingle = false;
+            buttonUpdate.width = 50;
+            buttonUpdate.height = 50;
+            buttonUpdate.x = 50;
+            buttonUpdate.y = 375;
+            this.addChild(buttonUpdate);
+            buttonUpdate.onClick = function () {
+                //alert("保存成功")
+                //保存picData，刷新Tile
+                _this.buttonUpdateListner();
+            };
             //保存按钮
             var buttonSave = new ui.Button();
             buttonSave.text = "保存";
             buttonSave.isSingle = false;
             buttonSave.width = 50;
             buttonSave.height = 50;
-            buttonSave.y = 375;
+            buttonSave.y = 450;
             this.addChild(buttonSave);
             buttonSave.onClick = function () {
                 //alert("保存成功")
@@ -146,7 +152,7 @@ var editor;
             buttonBack.width = 50;
             buttonBack.height = 50;
             buttonBack.x = 75;
-            buttonBack.y = 375;
+            buttonBack.y = 450;
             this.addChild(buttonBack);
             buttonBack.onClick = function () {
                 //alert("确定撤销？")
@@ -169,26 +175,32 @@ var editor;
                 this.buttonPic[m].isClick = false;
             }
         };
-        //保存（刷新Tile，没能在picButtonListner里实现)
-        ControlPanel.prototype.buttonSaveListner = function () {
+        //刷新图片
+        ControlPanel.prototype.buttonUpdateListner = function () {
             for (var n = 0; n < editor.picNum; n++) {
                 if (this.buttonPic[n].isClick == true) {
                     this.nowTile.source = "pic" + (n + 1) + ".png";
                     picData[this.nowTile.ownedRow][this.nowTile.ownedCol] = n + 1;
+                    //backList.push(this.nowTile);
+                    // backPicList.push(this.nowTile.source)
                     break;
                 }
             }
+        };
+        //保存
+        ControlPanel.prototype.buttonSaveListner = function () {
             storage.saveFile();
         };
         // 撤销
         ControlPanel.prototype.buttonBackListner = function () {
             if (backList.length > 0) {
                 var lastStep = backList.pop();
-                var origonTile = origonBackList.pop();
+                var lastWalkable = backWalkableList.pop();
+                var lastPic = backPicList.pop();
                 console.log(lastStep);
-                console.log(origonTile);
-                lastStep.walkAble = origonTile.walkAble;
-                lastStep.source = origonTile.source;
+                //console.log(origonTile);
+                lastStep.walkAble = lastWalkable;
+                lastStep.source = lastPic;
                 this.showTileInfo(lastStep);
                 mapData[lastStep.ownedRow][lastStep.ownedCol] = lastStep.walkAble == true ? 0 : 1;
                 picData[lastStep.ownedRow][lastStep.ownedCol] = lastStep.source.charCodeAt(3) - 48;
@@ -200,12 +212,10 @@ var editor;
         //初始化编辑菜单
         ControlPanel.prototype.setControlPanel = function (tile) {
             this.nowTile = tile;
-            console.log(tile);
-            var newTile = new editor.Tile();
-            newTile.walkAble = tile.walkAble;
-            newTile.source = tile.source;
-            origonBackList.push(newTile);
+            //console.log(tile);
             backList.push(tile);
+            backWalkableList.push(tile.walkAble);
+            backPicList.push(tile.source);
             this.showTileInfo(tile);
             //console.log(this.nowTile)
             for (var m = 0; m < editor.picNum; m++) {
