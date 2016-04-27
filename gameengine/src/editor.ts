@@ -6,7 +6,8 @@ module editor {
 
     export const GRID_PIXEL_HEIGHT = 50;
 
-    export const picNum = 6;
+    export const picNum = 8;
+    export const colNum = 4;
 
     var backList = new Array();
    // var origonBackList=new Array();
@@ -23,8 +24,8 @@ module editor {
 
             super();
             this.cache = document.createElement("canvas");
-            this.cache.width = 400;
-            this.cache.height = 400;
+            this.cache.width = 800;
+            this.cache.height =800;
 
         }
 
@@ -133,11 +134,11 @@ module editor {
             var pic = [];
             this.buttonPic = [];
 
-            for (var i = 0; i < picNum / 3; i++) {
+            for (var i = 0; i < picNum / colNum; i++) {
 
-                for (var j = 0; j < 3; j++) {
+                for (var j = 0; j < colNum; j++) {
                     var tile = new editor.Tile();
-                    tile.source = "pic" + (i * 3 + j + 1) + ".png";
+                    tile.source = "pic" + (i * colNum + j + 1) + ".png";
                     tile.x = 50 * j;
                     tile.y = 200 + 75 * i;
                     this.addChild(tile)
@@ -146,15 +147,15 @@ module editor {
                     tile.height = editor.GRID_PIXEL_HEIGHT;
                   
 
-                    this.buttonPic[i * 3 + j] = new ui.Button();
-                    this.buttonPic[i * 3 + j].text = "";
-                    this.buttonPic[i * 3 + j].width = 50;
-                    this.buttonPic[i * 3 + j].height = 25;
-                    this.buttonPic[i * 3 + j].x = 50 * j;
-                    this.buttonPic[i * 3 + j].y = 250 + i * 75;
-                    this.addChild(this.buttonPic[i * 3 + j]);
-                    this.buttonPic[i * 3 + j].checkClickNO = i * 3 + j;
-                    this.buttonPic[i * 3 + j].onClick = () => {
+                    this.buttonPic[i * colNum + j] = new ui.Button();
+                    this.buttonPic[i * colNum + j].text = "";
+                    this.buttonPic[i * colNum + j].width = 50;
+                    this.buttonPic[i * colNum + j].height = 25;
+                    this.buttonPic[i * colNum + j].x = 50 * j;
+                    this.buttonPic[i * colNum + j].y = 250 + i * 75;
+                    this.addChild(this.buttonPic[i * colNum + j]);
+                    this.buttonPic[i * colNum + j].checkClickNO = i * colNum + j;
+                    this.buttonPic[i * colNum + j].onClick = () => {
                         //更换图片素材
     
                         this.buttonPicListner();

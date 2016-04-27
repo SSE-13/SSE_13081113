@@ -7,7 +7,8 @@ var editor;
 (function (editor) {
     editor.GRID_PIXEL_WIDTH = 50;
     editor.GRID_PIXEL_HEIGHT = 50;
-    editor.picNum = 6;
+    editor.picNum = 8;
+    editor.colNum = 4;
     var backList = new Array();
     // var origonBackList=new Array();
     var backWalkableList = new Array();
@@ -18,8 +19,8 @@ var editor;
             _super.call(this);
             this.isDirty = true;
             this.cache = document.createElement("canvas");
-            this.cache.width = 400;
-            this.cache.height = 400;
+            this.cache.width = 800;
+            this.cache.height = 800;
         }
         WorldMap.prototype.render = function (context) {
             _super.prototype.render.call(this, context);
@@ -96,24 +97,24 @@ var editor;
             //素材图片和素材选择按钮
             var pic = [];
             this.buttonPic = [];
-            for (var i = 0; i < editor.picNum / 3; i++) {
-                for (var j = 0; j < 3; j++) {
+            for (var i = 0; i < editor.picNum / editor.colNum; i++) {
+                for (var j = 0; j < editor.colNum; j++) {
                     var tile = new editor.Tile();
-                    tile.source = "pic" + (i * 3 + j + 1) + ".png";
+                    tile.source = "pic" + (i * editor.colNum + j + 1) + ".png";
                     tile.x = 50 * j;
                     tile.y = 200 + 75 * i;
                     this.addChild(tile);
                     tile.width = editor.GRID_PIXEL_WIDTH;
                     tile.height = editor.GRID_PIXEL_HEIGHT;
-                    this.buttonPic[i * 3 + j] = new ui.Button();
-                    this.buttonPic[i * 3 + j].text = "";
-                    this.buttonPic[i * 3 + j].width = 50;
-                    this.buttonPic[i * 3 + j].height = 25;
-                    this.buttonPic[i * 3 + j].x = 50 * j;
-                    this.buttonPic[i * 3 + j].y = 250 + i * 75;
-                    this.addChild(this.buttonPic[i * 3 + j]);
-                    this.buttonPic[i * 3 + j].checkClickNO = i * 3 + j;
-                    this.buttonPic[i * 3 + j].onClick = function () {
+                    this.buttonPic[i * editor.colNum + j] = new ui.Button();
+                    this.buttonPic[i * editor.colNum + j].text = "";
+                    this.buttonPic[i * editor.colNum + j].width = 50;
+                    this.buttonPic[i * editor.colNum + j].height = 25;
+                    this.buttonPic[i * editor.colNum + j].x = 50 * j;
+                    this.buttonPic[i * editor.colNum + j].y = 250 + i * 75;
+                    this.addChild(this.buttonPic[i * editor.colNum + j]);
+                    this.buttonPic[i * editor.colNum + j].checkClickNO = i * editor.colNum + j;
+                    this.buttonPic[i * editor.colNum + j].onClick = function () {
                         //更换图片素材
                         _this.buttonPicListner();
                     };

@@ -55,7 +55,7 @@ var stage = new render.DisplayObjectContainer();
 stage.addChild(mapEditor);
 var panel = new editor.ControlPanel();
 
-panel.x = 300;
+panel.x = 500;
 stage.addChild(panel);
 
-renderCore.start(stage,['pic0.png','pic1.png','pic2.png','pic3.png','pic4.png','pic5.png','pic6.png']);
+renderCore.start(stage,['pic0.png','pic1.png','pic2.png','pic3.png','pic4.png','pic5.png','pic6.png','pic7.png','pic8.png']);
