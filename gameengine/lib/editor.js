@@ -8,6 +8,8 @@ var editor;
     editor.GRID_PIXEL_WIDTH = 50;
     editor.GRID_PIXEL_HEIGHT = 50;
     editor.picNum = 6;
+    var backList = new Array();
+    var origonBackList = new Array();
     var WorldMap = (function (_super) {
         __extends(WorldMap, _super);
         function WorldMap() {
@@ -29,16 +31,18 @@ var editor;
             _super.call(this);
         }
         Tile.prototype.setWalkable = function (value) {
-            // this.color = value ? "#0000FF" : "#FF0000";
+            this.walkAble = value == 0 ? true : false;
         };
         return Tile;
     }(render.Bitmap));
     editor.Tile = Tile;
     var ControlPanel = (function (_super) {
         __extends(ControlPanel, _super);
+        // public backList;
         function ControlPanel() {
             var _this = this;
             _super.call(this);
+            // this.backList=[];
             var button = new ui.Button();
             button.text = "Hello";
             button.width = 150;
@@ -47,12 +51,14 @@ var editor;
             button.onClick = function () {
                 alert(111);
             };
+            //显示行信息
             this.textRow = new render.TextField();
             this.textRow.text = "行：";
             this.textRow.width = 75;
             this.textRow.height = 50;
             this.textRow.y = 50;
             this.addChild(this.textRow);
+            //显示列信息
             this.textCol = new render.TextField();
             this.textCol.text = "列：";
             this.textCol.width = 75;
@@ -66,6 +72,7 @@ var editor;
             textWalkable.height = 50;
             textWalkable.y = 100;
             this.addChild(textWalkable);
+            //是否可走按钮
             this.buttonWalkable = new ui.Button();
             this.buttonWalkable.text = "是";
             this.buttonWalkable.width = 50;
@@ -74,13 +81,9 @@ var editor;
             this.buttonWalkable.y = 75;
             this.addChild(this.buttonWalkable);
             this.buttonWalkable.onClick = function () {
-                // buttonWalkable.setColor(this._textWalkable == "是" ? "#0000FF":"#FF0000");
-                _this.buttonWalkable.text = _this.buttonWalkable.text == "是" ? "否" : "是";
-                if (_this.nowTile) {
-                    mapData[_this.nowTile.ownedRow][_this.nowTile.ownedCol] = mapData[_this.nowTile.ownedRow][_this.nowTile.ownedCol] == 0 ? 1 : 0;
-                }
                 //alert("设为可走");
                 //修改mapDate
+                _this.setNowTileWalkable();
             };
             var textPic = new render.TextField();
             textPic.text = "图片素材：";
@@ -88,6 +91,7 @@ var editor;
             textPic.height = 50;
             textPic.y = 150;
             this.addChild(textPic);
+            //素材图片和素材选择按钮
             var pic = [];
             this.buttonPic = [];
             for (var i = 0; i < editor.picNum / 3; i++) {
@@ -110,19 +114,19 @@ var editor;
                     this.addChild(this.buttonPic[i * 3 + j]);
                     this.buttonPic[i * 3 + j].onClick = function () {
                         //更换图片素材
-                        for (var m = 0; m < editor.picNum; m++) {
-                            _this.buttonPic[m].setColor("#FF0000");
-                            _this.buttonPic[m].isClick = false;
-                        }
-                        for (var n = 0; n < editor.picNum; n++) {
-                            if (_this.buttonPic[n].isClick == true) {
-                                picData[_this.nowTile.ownedRow][_this.nowTile.ownedCol] = n + 1;
-                                break;
-                            }
-                        }
+                        _this.buttonPicListner();
+                        /* for(var n=0;n<picNum;n++){
+                              
+                              if(this.buttonPic[n].isClick==true){
+                                   picData[this.nowTile.ownedRow][this.nowTile.ownedCol]=n+1;
+                                   this.nowTile.source="pic"+(n+1)+".png";
+                                   break;
+                              }
+                         }*/
                     };
                 }
             }
+            //保存按钮
             var buttonSave = new ui.Button();
             buttonSave.text = "保存";
             buttonSave.isSingle = false;
@@ -131,10 +135,11 @@ var editor;
             buttonSave.y = 375;
             this.addChild(buttonSave);
             buttonSave.onClick = function () {
-                alert("保存成功");
-                //save
-                storage.saveFile();
+                //alert("保存成功")
+                //保存picData，刷新Tile
+                _this.buttonSaveListner();
             };
+            //撤销按钮
             var buttonBack = new ui.Button();
             buttonBack.text = "撤销";
             buttonBack.isSingle = false;
@@ -144,23 +149,81 @@ var editor;
             buttonBack.y = 375;
             this.addChild(buttonBack);
             buttonBack.onClick = function () {
-                // alert("确定撤销？")
+                //alert("确定撤销？")
                 //back
+                _this.buttonBackListner();
             };
         }
-        //显示Tile信息
+        //是否可走按钮监听函数
+        ControlPanel.prototype.setNowTileWalkable = function () {
+            this.buttonWalkable.text = this.buttonWalkable.text == "是" ? "否" : "是";
+            if (this.nowTile) {
+                this.nowTile.walkAble = this.nowTile.walkAble == true ? false : true;
+                mapData[this.nowTile.ownedRow][this.nowTile.ownedCol] = mapData[this.nowTile.ownedRow][this.nowTile.ownedCol] == 0 ? 1 : 0;
+            }
+        };
+        //buttonPic监听函数
+        ControlPanel.prototype.buttonPicListner = function () {
+            for (var m = 0; m < editor.picNum; m++) {
+                this.buttonPic[m].setColor("#FF0000");
+                this.buttonPic[m].isClick = false;
+            }
+        };
+        //保存（刷新Tile，没能在picButtonListner里实现)
+        ControlPanel.prototype.buttonSaveListner = function () {
+            for (var n = 0; n < editor.picNum; n++) {
+                if (this.buttonPic[n].isClick == true) {
+                    this.nowTile.source = "pic" + (n + 1) + ".png";
+                    picData[this.nowTile.ownedRow][this.nowTile.ownedCol] = n + 1;
+                    break;
+                }
+            }
+            storage.saveFile();
+        };
+        // 撤销
+        ControlPanel.prototype.buttonBackListner = function () {
+            if (backList.length > 0) {
+                var lastStep = backList.pop();
+                var origonTile = origonBackList.pop();
+                console.log(lastStep);
+                console.log(origonTile);
+                lastStep.walkAble = origonTile.walkAble;
+                lastStep.source = origonTile.source;
+                this.showTileInfo(lastStep);
+                mapData[lastStep.ownedRow][lastStep.ownedCol] = lastStep.walkAble == true ? 0 : 1;
+                picData[lastStep.ownedRow][lastStep.ownedCol] = lastStep.source.charCodeAt(3) - 48;
+            }
+            else {
+                console.log("No More Step to Go Back");
+            }
+        };
+        //初始化编辑菜单
         ControlPanel.prototype.setControlPanel = function (tile) {
             this.nowTile = tile;
-            console.log(this.nowTile);
+            console.log(tile);
+            var newTile = new editor.Tile();
+            newTile.walkAble = tile.walkAble;
+            newTile.source = tile.source;
+            origonBackList.push(newTile);
+            backList.push(tile);
+            this.showTileInfo(tile);
+            //console.log(this.nowTile)
+            for (var m = 0; m < editor.picNum; m++) {
+                this.buttonPic[m].isClick = false;
+            }
+        };
+        //显示当前Tile信息
+        ControlPanel.prototype.showTileInfo = function (tile) {
             this.textRow.text = "行：" + (tile.ownedRow + 1);
             this.textCol.text = "列：" + (tile.ownedCol + 1);
-            this.buttonWalkable.text = mapData[tile.ownedRow][tile.ownedCol] == 0 ? "是" : "否";
-            this.buttonWalkable.setColor(mapData[tile.ownedRow][tile.ownedCol] == 0 ? "#FF0000" : "#0000FF");
+            this.buttonWalkable.text = tile.walkAble == true ? "是" : "否";
+            this.buttonWalkable.setColor(tile.walkAble == true ? "#FF0000" : "#0000FF");
             for (var i = 0; i < editor.picNum; i++) {
                 this.buttonPic[i].setColor("#FF0000");
             }
-            if (picData[tile.ownedRow][tile.ownedCol] != 0) {
-                this.buttonPic[picData[tile.ownedRow][tile.ownedCol] - 1].setColor("#0000FF");
+            if (tile.source.charCodeAt(3) - 48 != 0) {
+                console.log(tile.source.charCodeAt(3) - 49);
+                this.buttonPic[tile.source.charCodeAt(3) - 49].setColor("#0000FF");
             }
         };
         return ControlPanel;
