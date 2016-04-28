@@ -192,7 +192,6 @@ module editor {
             this.addChild(buttonSave);
             buttonSave.onClick = () => {
                 //alert("保存成功")
-                //保存picData，刷新Tile
                 this.buttonSaveListner();
 
             }
