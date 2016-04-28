@@ -74,11 +74,11 @@ module editor {
          vy;
          
         
-         public run(grid) {
-            grid.setStartNode(0, 0);
-            grid.setEndNode(10, 8);
+         public run(grid,start:editor.Tile,end:editor.Tile) {
+            grid.setStartNode(start.ownedRow, start.ownedCol);
+            grid.setEndNode(end.ownedRow, end.ownedCol);
             var findpath = new astar.AStar();
-            findpath.setHeurisitic(findpath.diagonal);
+            findpath.setHeurisitic(findpath.diagonal)
             var result = findpath.findPath(grid);
             this.path = findpath._path;
             console.log(this.path);
@@ -104,13 +104,17 @@ module editor {
               
                 if( this.path.length>2){
                    var node1=this.path.shift();
-                
                    var node2=this.path.shift();
+                   //更新nowPostion人物当前位置
+                   nowPostion.ownedRow=node2.x
+                   nowPostion.ownedCol=node2.y
+                   
+                   
                    this.path.unshift(node2);
                    this.path.unshift(node1);
                    this.vx=(node2.x-node1.x)*GRID_PIXEL_WIDTH/times;
                    this.vy=(node2.y-node1.y)*GRID_PIXEL_HEIGHT/times;
-                 
+                   
                    this.x+=this.vx;
                    this.y+=this.vy;
                  } else{

@@ -30,12 +30,19 @@ function createMapEditor() {
 
 function onTileClick(tile: editor.Tile) {
     console.log(tile);
+    //人物移动。。。。。。。。。。。。。。
+    body.run(mapEditor.grid,nowPostion,tile);
 }
+
+var nowPostion=new editor.Tile();
+
+
 var mapEditor;
 var mapData;
 var picData;
 var boyShape:editor.BoyShape;
 var body:editor.BoyBody;
+
 var storage = data.Storage.getInstance();
 storage.readFile(readSuccess);
 
@@ -52,7 +59,11 @@ var readSuccess = ()=> {
     body = new editor.BoyBody(boyShape);
     body.x = 350;
     body.y = 350;
+    nowPostion.ownedCol=7;
+    nowPostion.ownedRow=7;
     stage.addChild(boyShape);
+    
+    
 } 
 
 var renderCore = new render.RenderCore();
@@ -64,3 +75,6 @@ eventCore.init();
 var stage = new render.DisplayObjectContainer();
 
 renderCore.start(stage,['pic1.png','pic2.png','pic3.png','pic4.png','pic5.png','pic6.png','pic7.png','pic8.png']);
+
+var ticker = new Ticker();
+ticker.start([body]);
